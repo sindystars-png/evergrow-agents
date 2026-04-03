@@ -49,38 +49,41 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Evergrow Financials Brand Theme */
+  /* Primary: Sage/Olive Green (#5C7050) — the darker green from logo */
+  /* Accent: Yellow-Green (#C5C35C) — the lighter green from logo */
+  --background: oklch(0.99 0.002 120);
+  --foreground: oklch(0.20 0.02 140);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.20 0.02 140);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.20 0.02 140);
+  --primary: oklch(0.48 0.08 140);
+  --primary-foreground: oklch(0.98 0.005 120);
+  --secondary: oklch(0.95 0.02 120);
+  --secondary-foreground: oklch(0.30 0.04 140);
+  --muted: oklch(0.95 0.01 120);
+  --muted-foreground: oklch(0.50 0.02 140);
+  --accent: oklch(0.80 0.12 105);
+  --accent-foreground: oklch(0.25 0.04 140);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --border: oklch(0.90 0.02 120);
+  --input: oklch(0.90 0.02 120);
+  --ring: oklch(0.55 0.08 140);
+  --chart-1: oklch(0.48 0.08 140);
+  --chart-2: oklch(0.80 0.12 105);
+  --chart-3: oklch(0.60 0.10 140);
+  --chart-4: oklch(0.70 0.08 120);
+  --chart-5: oklch(0.35 0.06 140);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.97 0.005 120);
+  --sidebar-foreground: oklch(0.20 0.02 140);
+  --sidebar-primary: oklch(0.48 0.08 140);
+  --sidebar-primary-foreground: oklch(0.98 0.005 120);
+  --sidebar-accent: oklch(0.93 0.03 120);
+  --sidebar-accent-foreground: oklch(0.25 0.04 140);
+  --sidebar-border: oklch(0.90 0.02 120);
+  --sidebar-ring: oklch(0.55 0.08 140);
 }
 
 .dark {
