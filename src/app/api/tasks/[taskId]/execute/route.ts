@@ -13,6 +13,7 @@ import { getSystemPrompt } from "@/lib/ai/system-prompts";
 import { getToolsForAgent, executeTool } from "@/lib/ai/tools";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { format } from "date-fns";
+import type { MessageParam } from "@anthropic-ai/sdk/resources/messages";
 
 export const maxDuration = 300; // 5 minutes
 
@@ -130,22 +131,32 @@ export async function POST(
         const tools = getToolsForAgent(agent.role);
         send({ type: "status", message: `${agent.name} is analyzing the task...` });
 
+        // Accumulate messages across all tool rounds so the agent remembers prior steps
+        const claudeMessages: MessageParam[] = [
+          { role: "user", content: taskMessage },
+        ];
+
         let response = await anthropic.messages.create({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 4096,
+          max_tokens: 8192,
           system: systemPrompt,
           tools,
-          messages: [{ role: "user", content: taskMessage }],
+          messages: claudeMessages,
         });
 
-        // Tool use loop
+        // Tool use loop — accumulate all rounds
         const toolResults: { name: string; result: string }[] = [];
         let totalTokens = response.usage?.output_tokens ?? 0;
         let round = 0;
+        const maxRounds = 25;
 
-        while (response.stop_reason === "tool_use" && round < 15) {
+        while (response.stop_reason === "tool_use" && round < maxRounds) {
           round++;
           const assistantContent = response.content;
+
+          // Add assistant response to message history
+          claudeMessages.push({ role: "assistant", content: assistantContent });
+
           const toolUseBlocks = assistantContent.filter((b) => b.type === "tool_use");
 
           const toolResultContents = [];
@@ -172,18 +183,18 @@ export async function POST(
             }
           }
 
+          // Add tool results to message history
+          claudeMessages.push({ role: "user", content: toolResultContents });
+
           send({ type: "status", message: `${agent.name} is thinking... (step ${round})` });
 
+          // Continue with FULL accumulated history
           response = await anthropic.messages.create({
             model: "claude-sonnet-4-20250514",
-            max_tokens: 4096,
+            max_tokens: 8192,
             system: systemPrompt,
             tools,
-            messages: [
-              { role: "user", content: taskMessage },
-              { role: "assistant", content: assistantContent },
-              { role: "user", content: toolResultContents },
-            ],
+            messages: claudeMessages,
           });
 
           totalTokens += response.usage?.output_tokens ?? 0;
