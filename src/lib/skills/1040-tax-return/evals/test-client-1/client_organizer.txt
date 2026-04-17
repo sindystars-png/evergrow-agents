@@ -1,0 +1,91 @@
+TAX ORGANIZER — 2025 TAX YEAR
+Client: Sarah J. Martinez
+SSN: 456-78-9012
+DOB: 05/14/1985
+Occupation: Graphic Designer
+Phone: (415) 555-0143
+Email: sarah.martinez@email.com
+US Citizen: Yes
+
+Filing Status: Single
+No dependents
+
+Address:
+789 Valencia Street, Apt 3C
+San Francisco, CA 94110
+
+=== INCOME ===
+
+W-2 from DesignCo Inc (EIN: 34-5678901):
+  Box 1 Wages: $118,500
+  Box 2 Federal Withheld: $22,470
+  Box 3 SS Wages: $118,500
+  Box 4 SS Tax: $1,830
+  Box 5 Medicare Wages: $118,500
+  Box 6 Medicare Tax: $1,718
+
+1099-INT from Wells Fargo:
+  Interest income: $1,245
+
+1099-DIV from Fidelity Investments:
+  Ordinary dividends: $3,800
+  Qualified dividends: $2,900
+  Foreign tax paid: $120
+
+=== FREELANCE INCOME (Schedule C) ===
+
+Business: Sarah Martinez Design
+No EIN (uses SSN)
+NAICS: 541430 (Graphic Design)
+Cash basis accounting
+
+Gross receipts: $28,000
+Expenses:
+  Adobe Creative Suite: $660 (Software/Supplies)
+  Home office internet (biz %): $480 (Utilities)
+  Professional development courses: $1,200 (Education/Other)
+  Business insurance: $900
+  Client meeting meals: $340
+
+=== CAPITAL GAINS ===
+
+Sold NVDA 25 shares:
+  Acquired: 02/10/2024
+  Sold: 08/15/2025
+  Proceeds: $8,750
+  Cost basis: $5,200
+  (Long-term)
+
+Sold COIN 40 shares:
+  Acquired: 11/01/2025
+  Sold: 12/10/2025
+  Proceeds: $3,200
+  Cost basis: $4,800
+  (Short-term loss)
+
+=== DEDUCTIONS ===
+
+I'd like to itemize if it makes sense.
+
+State income taxes paid: $9,800
+Real estate taxes: N/A (renter)
+Student loan interest: $1,850
+HSA contributions (self-only): $4,150
+Traditional IRA contribution: $6,500
+
+Charitable:
+  Cash donations to SF Food Bank: $1,500
+  Clothing donation to Goodwill: $400 (noncash)
+
+=== ESTIMATED PAYMENTS ===
+Q1: $2,000
+Q2: $2,000
+Q3: $2,000
+Q4: $2,000
+
+=== FOREIGN ACCOUNTS ===
+None
+
+=== NOTES ===
+First year doing freelance work alongside my W-2 job. Please make sure
+the self-employment tax is handled correctly.

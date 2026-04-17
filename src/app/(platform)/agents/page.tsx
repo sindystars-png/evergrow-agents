@@ -9,6 +9,7 @@ const agentIcons: Record<string, string> = {
   bookkeeper: "📚",
   "sales-tax-specialist": "🧾",
   "document-manager": "📁",
+  "income-tax-specialist": "📋",
 };
 
 export default async function AgentsPage() {

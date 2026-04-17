@@ -1,0 +1,143 @@
+CLIENT: James & Linda Chen
+Tax Year 2025
+Filing: Married Filing Jointly
+
+=== PERSONAL INFO ===
+
+James Chen
+SSN: 567-89-0123
+DOB: 11/22/1978
+Occupation: VP of Engineering
+Legally blind: No
+Age 65+: No
+
+Linda Chen
+SSN: 678-90-1234
+DOB: 03/15/1980
+Occupation: Pediatrician
+Legally blind: No
+Age 65+: No
+
+Address: 2100 Pacific Heights Blvd, San Francisco, CA 94115
+
+Dependents:
+1. Mei Chen, SSN 789-01-2345, Daughter, DOB 06/20/2015, lives with us all year, CTC eligible
+2. Kevin Chen, SSN 890-12-3456, Son, DOB 09/08/2018, lives with us all year, CTC eligible
+3. Grace Chen, SSN 901-23-4567, Daughter, DOB 01/30/2022, lives with us all year, CTC eligible
+
+=== W-2 INCOME ===
+
+James - TechCorp Systems (EIN: 45-6789012)
+  Wages: $245,000
+  Fed withheld: $52,000
+  SS Wages: $176,100
+  SS Tax: $10,918
+  Medicare Wages: $245,000
+  Medicare Tax: $3,553
+
+Linda - Bay Area Medical Group (EIN: 56-7890123)
+  Wages: $195,000
+  Fed withheld: $38,000
+  SS Wages: $176,100
+  SS Tax: $10,918
+  Medicare Wages: $195,000
+  Medicare Tax: $2,828
+
+=== INTEREST & DIVIDENDS ===
+
+1099-INT Chase Bank: $2,800 interest
+1099-INT Schwab Money Market: $4,200 interest
+
+1099-DIV Vanguard Total Stock Market:
+  Ordinary div: $12,500
+  Qualified div: $10,200
+  Cap gain distributions: $2,400
+
+1099-DIV iShares International:
+  Ordinary div: $4,600
+  Qualified div: $3,100
+  Foreign tax paid: $690
+
+=== CAPITAL GAINS (1099-B from Schwab) ===
+
+1. MSFT 200 shares
+   Acquired: 01/15/2019, Sold: 03/20/2025
+   Proceeds: $85,000, Cost: $52,000
+   Long-term
+
+2. AMZN 50 shares
+   Acquired: 06/01/2020, Sold: 07/10/2025
+   Proceeds: $42,500, Cost: $28,000
+   Long-term
+
+3. PLTR 500 shares
+   Acquired: 09/15/2025, Sold: 11/20/2025
+   Proceeds: $18,000, Cost: $22,500
+   Short-term LOSS
+
+=== RENTAL PROPERTY (Schedule E) ===
+
+Property 1: 450 Lake Merritt Drive, Oakland CA 94610
+Type: Condo
+Days rented: 365
+Days personal: 0
+Rental income: $42,000
+
+Expenses:
+  Insurance: $2,400
+  Mortgage interest: $14,200
+  Repairs: $3,800
+  Property taxes: $5,600
+  HOA/Management: $4,800
+  Depreciation: $8,200
+
+=== ITEMIZED DEDUCTIONS ===
+
+Medical: $8,500 (mostly Linda's dental work)
+State income taxes paid: $32,000
+Real estate taxes (primary home): $14,800
+Mortgage interest (primary home, 1098): $28,500
+Charitable — cash: $15,000 to various (church, school, Red Cross)
+Charitable — noncash: $3,500 (furniture to Salvation Army)
+
+=== CREDITS ===
+
+Child/dependent care: $6,000 paid for after-school care (under 13)
+Foreign tax credit: $690 (from iShares)
+
+=== PAYMENTS ===
+
+Federal withholding total: $90,000 (combined from both W-2s)
+Estimated payments: $5,000 per quarter ($20,000 total)
+
+=== RETIREMENT ===
+
+James: 401(k) contributions $23,500
+Linda: 401(k) contributions $23,500
+Linda: Backdoor Roth IRA $7,000 (non-deductible traditional contribution converted)
+
+=== FOREIGN ACCOUNTS ===
+
+James has a savings account at HSBC Hong Kong
+  Account type: Savings
+  Country: Hong Kong
+  Max value during year: $125,000
+  Year-end value: $118,000
+  Interest income: $3,200
+  Joint account: No
+
+=== K-1 INCOME ===
+
+Chen Family LP (EIN: 67-8901234), Partnership
+  Ordinary income: $12,000
+  Rental income: $0
+  Interest/dividends: $800
+  Capital gains: $3,500
+
+=== NOTES ===
+
+Please itemize — we always exceed the standard deduction.
+James inherited some money in HK from his father years ago, that's the HSBC account.
+The K-1 is from a family limited partnership.
+Linda's backdoor Roth — the traditional IRA contribution was immediately converted,
+so there should be no taxable amount (basis = contribution).

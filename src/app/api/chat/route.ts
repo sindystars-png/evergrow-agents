@@ -89,19 +89,25 @@ export async function POST(request: NextRequest) {
     // Call Claude API
     let response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
+      max_tokens: 8192,
       system: systemPrompt,
       tools,
       messages: claudeMessages,
     });
 
-    // Handle tool use loop
+    // Handle tool use loop — accumulate all rounds so agent has full context
     const toolResults: { name: string; result: string }[] = [];
     const allMessages = [...claudeMessages];
+    let rounds = 0;
+    const maxRounds = 15;
 
-    while (response.stop_reason === "tool_use") {
+    while (response.stop_reason === "tool_use" && rounds < maxRounds) {
+      rounds++;
       const assistantContent = response.content;
+
+      // Accumulate into both tracking array and Claude message array
       allMessages.push({ role: "assistant", content: JSON.stringify(assistantContent) });
+      claudeMessages.push({ role: "assistant", content: assistantContent });
 
       const toolUseBlocks = assistantContent.filter(
         (block) => block.type === "tool_use"
@@ -130,18 +136,15 @@ export async function POST(request: NextRequest) {
       }
 
       allMessages.push({ role: "user", content: JSON.stringify(toolResultContents) });
+      claudeMessages.push({ role: "user", content: toolResultContents });
 
-      // Continue the conversation with tool results
+      // Continue with FULL accumulated message history
       response = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4096,
+        max_tokens: 8192,
         system: systemPrompt,
         tools,
-        messages: [
-          ...claudeMessages,
-          { role: "assistant", content: assistantContent },
-          { role: "user", content: toolResultContents },
-        ],
+        messages: claudeMessages,
       });
     }
 
@@ -167,8 +170,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Chat API error:", error);
+    const errMsg = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: errMsg },
       { status: 500 }
     );
   }

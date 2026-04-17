@@ -1,0 +1,17 @@
+{
+  "skill_name": "1040-tax-return",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a client folder with tax documents for Sarah Martinez. She's a single filer with a W-2 job and some freelance design income. Please prepare her 2025 Form 1040 return — read through all the documents in the client folder, populate the Excel workbook, review it, and generate the PDF. The client docs are in evals/test-client-1/ and the blank workbook template is at mnt/Tax templates/1040_Tax_Return_2025.xlsx. Save the populated workbook and PDF to mnt/Tax templates/.",
+      "expected_output": "Populated Excel workbook with all of Sarah's income, deductions, and credits correctly entered. PDF return package showing accurate totals. Should include Schedule C for freelance income, Schedule SE for self-employment tax, capital gains on Schedules D and 8949, and proper standard vs itemized comparison.",
+      "files": ["evals/test-client-1/client_organizer.txt"]
+    },
+    {
+      "id": 2,
+      "prompt": "Here's a folder with all the tax docs for James and Linda Chen — married filing jointly, high income couple with kids, rental property, foreign accounts, and a K-1. Please go through everything, prepare their full 1040 return in the Excel workbook, review it for accuracy, and generate the PDF. Client docs are in evals/test-client-2/, blank template at mnt/Tax templates/1040_Tax_Return_2025.xlsx. Save outputs to mnt/Tax templates/.",
+      "expected_output": "Complete MFJ return with all income sources populated. Should include 3 dependents, both W-2s, interest/dividends, capital gains (including short-term loss), Schedule E rental property, K-1 income, itemized deductions with SALT cap, child care credit, foreign tax credit, FBAR/FATCA reporting for the HK account, and correct total tax/refund calculation.",
+      "files": ["evals/test-client-2/client_docs.txt"]
+    }
+  ]
+}

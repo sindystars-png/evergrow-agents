@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
-import { ChatPanel } from "@/components/chat/chat-panel";
+import { AgentWorkspace } from "@/components/agents/agent-workspace";
 import type { Agent } from "@/types/database";
 
 export default async function AgentChatPage({
@@ -36,15 +36,31 @@ export default async function AgentChatPage({
   } = await supabase.auth.getUser();
 
   // Get partner info
-  const partnerId = user?.id ?? "anonymous";
+  let partnerId = user?.id ?? "";
   let partnerName = "Partner";
+
   if (user) {
     const { data: partner } = await supabaseAdmin
       .from("partners")
-      .select("full_name")
+      .select("id, full_name")
       .eq("id", user.id)
       .single();
-    if (partner) partnerName = partner.full_name;
+    if (partner) {
+      partnerId = partner.id;
+      partnerName = partner.full_name;
+    }
+  }
+
+  if (!partnerId) {
+    const { data: fallbackPartner } = await supabaseAdmin
+      .from("partners")
+      .select("id, full_name")
+      .limit(1)
+      .single();
+    if (fallbackPartner) {
+      partnerId = fallbackPartner.id;
+      partnerName = fallbackPartner.full_name;
+    }
   }
 
   // Get clients
@@ -54,21 +70,43 @@ export default async function AgentChatPage({
     .eq("status", "active")
     .order("name");
 
+  // Load conversations
+  const { data: conversations } = await supabaseAdmin
+    .from("conversations")
+    .select("id, title, created_at, client_id")
+    .eq("agent_id", agent.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  // Load agent tasks — try with recurrence join, fall back without
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let tasks: any[] | null = null;
+  const { data: tasksWithRec, error: tasksErr } = await supabaseAdmin
+    .from("tasks")
+    .select("*, task_recurrences(*), clients(name)")
+    .eq("agent_id", agent.id)
+    .order("created_at", { ascending: false });
+
+  if (tasksErr) {
+    // task_recurrences table may not exist yet — load tasks without join
+    const { data: tasksOnly } = await supabaseAdmin
+      .from("tasks")
+      .select("*, clients(name)")
+      .eq("agent_id", agent.id)
+      .order("created_at", { ascending: false });
+    tasks = tasksOnly;
+  } else {
+    tasks = tasksWithRec;
+  }
+
   return (
-    <div className="h-[calc(100vh-6rem)] lg:h-[calc(100vh-4rem)] flex flex-col">
-      <div className="flex items-center gap-3 mb-4">
-        <h1 className="text-xl font-bold">{agent.name}</h1>
-        <span className="text-sm text-muted-foreground">
-          {agent.description}
-        </span>
-      </div>
-      <ChatPanel
-        agent={agent as Agent}
-        partnerId={partnerId}
-        partnerName={partnerName}
-        clients={clients ?? []}
-        existingConversations={[]}
-      />
-    </div>
+    <AgentWorkspace
+      agent={agent as Agent}
+      partnerId={partnerId}
+      partnerName={partnerName}
+      clients={clients ?? []}
+      existingConversations={conversations ?? []}
+      initialTasks={tasks ?? []}
+    />
   );
 }

@@ -12,6 +12,33 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
+
+  // Bulk import
+  if (Array.isArray(body.clients)) {
+    const rows = body.clients.map((c: Record<string, string>) => ({
+      name: c.name,
+      entity_type: c.entity_type || null,
+      email: c.email || null,
+      phone: c.phone || null,
+      ein: c.ein || null,
+      contact_name: c.contact_name || null,
+      contact_phone: c.contact_phone || null,
+      contact_email: c.contact_email || null,
+    }));
+
+    const { data, error } = await supabaseAdmin
+      .from("clients")
+      .insert(rows)
+      .select();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    return NextResponse.json({ imported: data?.length ?? 0, clients: data });
+  }
+
+  // Single create
   const { data, error } = await supabaseAdmin
     .from("clients")
     .insert({
@@ -20,6 +47,9 @@ export async function POST(request: NextRequest) {
       email: body.email,
       phone: body.phone,
       ein: body.ein,
+      contact_name: body.contact_name || null,
+      contact_phone: body.contact_phone || null,
+      contact_email: body.contact_email || null,
     })
     .select()
     .single();

@@ -43,11 +43,24 @@ export type Client = {
     state?: string;
     zip?: string;
   } | null;
+  contact_name: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
   quickbooks_id: string | null;
   status: "active" | "inactive" | "prospect";
   notes: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type ClientService = {
+  id: string;
+  client_id: string;
+  service_type: "yearend_tax" | "bookkeeping" | "sales_tax" | "payroll" | "property_tax";
+  frequency: "weekly" | "bi_weekly" | "semi_monthly" | "monthly" | "quarterly" | "annually" | null;
+  notes: string | null;
+  active: boolean;
+  created_at: string;
 };
 
 export type ClientSchedule = {
