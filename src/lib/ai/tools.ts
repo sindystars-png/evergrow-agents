@@ -898,6 +898,21 @@ const toolsByRole: Record<string, Tool[]> = {
         required: ["to", "subject", "body"],
       },
     },
+    {
+      name: "triage_inbox",
+      description:
+        "ALL-IN-ONE email triage: lists all unread emails, auto-categorizes them by subject/sender patterns, moves them to the correct folders, and returns a complete summary ready to email to partners. USE THIS TOOL FIRST — it handles the entire triage workflow in a single call.",
+      input_schema: {
+        type: "object" as const,
+        properties: {
+          limit: {
+            type: "number",
+            description: "Max emails to process (default: 100)",
+          },
+        },
+        required: [],
+      },
+    },
   ],
 };
 
@@ -1491,6 +1506,193 @@ export async function executeTool(
 
       const recipientList = to.map(r => `${r.name} <${r.address}>`).join(", ");
       return `Email sent successfully!\n\nTo: ${recipientList}\nSubject: ${subject}`;
+    }
+
+    case "triage_inbox": {
+      const connected = await isConnected(context.partnerId);
+      if (!connected) return "Microsoft not connected.";
+
+      const { listEmails, findMailFolder, createMailFolder: createMF, batchMoveEmails } = await import("@/lib/microsoft/graph-client");
+
+      const limit = Math.min((input.limit as number) ?? 100, 100);
+
+      // 1. List all unread emails
+      const emailResult = await listEmails(context.partnerId, {
+        folderId: "inbox",
+        top: limit,
+        unreadOnly: true,
+      });
+
+      if (!emailResult.ok) return `Error listing emails: ${emailResult.error}`;
+      if (!emailResult.emails?.length) return "No unread emails found in the inbox. Nothing to triage.";
+
+      const emails = emailResult.emails;
+
+      // 2. Auto-categorize each email by subject/sender patterns
+      const categorizations: { messageId: string; folder: string; subject: string; from: string; fromEmail: string; preview: string }[] = [];
+      const clientEmails: { from: string; fromEmail: string; subject: string; preview: string }[] = [];
+
+      for (const email of emails) {
+        const subject = (email.subject ?? "").toLowerCase();
+        const fromName = email.from?.emailAddress?.name ?? "";
+        const fromEmail = email.from?.emailAddress?.address ?? "";
+        const preview = (email.bodyPreview ?? "").substring(0, 200);
+
+        let folder = "Client Correspondence"; // default
+
+        // Form 8879
+        if (subject.includes("8879") || subject.includes("form 8879")) {
+          folder = "Form 8879";
+        }
+        // E-Filing Acceptance
+        else if (
+          subject.includes("accepted") ||
+          subject.includes("e-file") ||
+          subject.includes("efile") ||
+          subject.includes("mef") ||
+          subject.includes("acknowledgement") ||
+          subject.includes("e-filed") ||
+          subject.includes("filing accepted") ||
+          subject.includes("return accepted")
+        ) {
+          folder = "E-Filing Acceptance";
+        }
+        // E-Fax Confirmations
+        else if (
+          subject.includes("fax") ||
+          subject.includes("efax") ||
+          subject.includes("e-fax")
+        ) {
+          folder = "E-Fax Confirmations";
+        }
+        // Payroll Notifications
+        else if (
+          subject.includes("payroll") ||
+          subject.includes("adp") ||
+          subject.includes("gusto") ||
+          subject.includes("direct deposit") ||
+          subject.includes("pay stub") ||
+          subject.includes("paychex") ||
+          subject.includes("wage") ||
+          fromEmail.includes("adp.com") ||
+          fromEmail.includes("gusto.com") ||
+          fromEmail.includes("paychex.com")
+        ) {
+          folder = "Payroll Notifications";
+        }
+        // IRS & State Guidance
+        else if (
+          subject.includes("irs") ||
+          subject.includes("internal revenue") ||
+          subject.includes("revenue ruling") ||
+          subject.includes("dor") ||
+          subject.includes("tax law") ||
+          subject.includes("cpe") ||
+          subject.includes("tax update") ||
+          subject.includes("regulatory") ||
+          fromEmail.includes("irs.gov") ||
+          fromEmail.includes(".gov")
+        ) {
+          folder = "IRS & State Guidance";
+        }
+        // Newsletters / Marketing — file to IRS & State Guidance if tax-related
+        else if (
+          subject.includes("newsletter") ||
+          subject.includes("webinar") ||
+          subject.includes("tax alert") ||
+          subject.includes("tax news")
+        ) {
+          folder = "IRS & State Guidance";
+        }
+
+        categorizations.push({
+          messageId: email.id,
+          folder,
+          subject: email.subject ?? "(no subject)",
+          from: fromName,
+          fromEmail,
+          preview,
+        });
+
+        // Track client emails for the partner summary
+        if (folder === "Client Correspondence") {
+          clientEmails.push({
+            from: fromName,
+            fromEmail,
+            subject: email.subject ?? "(no subject)",
+            preview,
+          });
+        }
+      }
+
+      // 3. Resolve all unique folder names to IDs in parallel
+      const uniqueFolders = [...new Set(categorizations.map((c) => c.folder))];
+      const folderIdMap: Record<string, string> = {};
+
+      const folderResults = await Promise.allSettled(
+        uniqueFolders.map(async (folderName) => {
+          const found = await findMailFolder(context.partnerId, folderName);
+          if (found.ok && found.folder) return { name: folderName, id: found.folder.id };
+          const created = await createMF(context.partnerId, folderName);
+          if (created.ok && created.folder) return { name: folderName, id: created.folder.id };
+          return { name: folderName, id: "" };
+        })
+      );
+
+      for (const r of folderResults) {
+        if (r.status === "fulfilled" && r.value.id) {
+          folderIdMap[r.value.name] = r.value.id;
+        }
+      }
+
+      // 4. Build move operations and execute in parallel
+      const operations = categorizations
+        .filter((c) => folderIdMap[c.folder])
+        .map((c) => ({ messageId: c.messageId, destinationFolderId: folderIdMap[c.folder] }));
+
+      const batchResult = await batchMoveEmails(context.partnerId, operations, true);
+
+      // 5. Build folder counts
+      const folderCounts: Record<string, number> = {};
+      for (const c of categorizations) {
+        folderCounts[c.folder] = (folderCounts[c.folder] || 0) + 1;
+      }
+
+      // 6. Build the summary for the agent to use
+      const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+      const summaryLines = [
+        `📬 EMAIL TRIAGE COMPLETE — ${today}`,
+        ``,
+        `Processed ${batchResult.success} of ${emails.length} emails.`,
+        ``,
+        `📊 Emails Filed:`,
+      ];
+
+      for (const [folder, count] of Object.entries(folderCounts)) {
+        if (folder !== "Client Correspondence") {
+          summaryLines.push(`  - ${folder}: ${count} emails`);
+        }
+      }
+
+      if (clientEmails.length > 0) {
+        summaryLines.push(``, `🔴 Client Emails Needing Attention (${clientEmails.length}):`);
+        for (const ce of clientEmails) {
+          summaryLines.push(`  - From: ${ce.from} <${ce.fromEmail}>`);
+          summaryLines.push(`    Subject: ${ce.subject}`);
+          summaryLines.push(`    Preview: ${ce.preview}`);
+          summaryLines.push(``);
+        }
+      } else {
+        summaryLines.push(``, `✅ No client emails needing partner attention.`);
+      }
+
+      if (batchResult.failed > 0) {
+        summaryLines.push(``, `⚠️ ${batchResult.failed} emails failed to move.`);
+      }
+
+      summaryLines.push(``, `Next step: Use send_email to forward this summary to both partners (Emily Chen: emily.chen@evergrowfin.com, Cara Jiang: jiangy@evergrowfin.com).`);
+
+      return summaryLines.join("\n");
     }
 
     // === Income Tax Specialist tools ===
