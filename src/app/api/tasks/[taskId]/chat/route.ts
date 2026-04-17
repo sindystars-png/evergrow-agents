@@ -16,7 +16,7 @@ import { getToolsForAgent, executeTool } from "@/lib/ai/tools";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { format } from "date-fns";
 
-export const maxDuration = 300;
+// No timeout limit on Render (persistent server)
 
 export async function POST(
   request: NextRequest,

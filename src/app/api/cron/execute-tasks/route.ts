@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { executeTask } from "@/lib/ai/task-executor";
 
-export const maxDuration = 300; // 5 minutes max for cron
+// No timeout limit on Render (persistent server)
 
 export async function GET(request: NextRequest) {
   // Verify cron secret (Vercel sets this header for cron jobs)

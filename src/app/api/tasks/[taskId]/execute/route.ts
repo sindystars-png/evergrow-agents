@@ -15,7 +15,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { format } from "date-fns";
 import type { MessageParam } from "@anthropic-ai/sdk/resources/messages";
 
-export const maxDuration = 300; // 5 minutes
+// No timeout limit on Render (persistent server)
 
 export async function POST(
   _request: NextRequest,

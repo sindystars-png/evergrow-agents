@@ -568,7 +568,7 @@ export async function isConnected(partnerId: string): Promise<boolean> {
 // OAuth Redirect Flow (uses permanent custom domain)
 // ============================================================
 
-const REDIRECT_URI = "https://agents.evergrowfin.com/api/microsoft/callback";
+const REDIRECT_URI = process.env.MICROSOFT_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL || "https://agents.evergrowfin.com"}/api/microsoft/callback`;
 
 export function getAuthUrl(state: string): string {
   const params = new URLSearchParams({

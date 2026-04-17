@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     query = query.eq("agent_id", agentId);
   }
 
-  let { data: tasks, error } = await query;
+  let { data: tasks, error } = await query; // eslint-disable-line prefer-const
 
   if (error) {
     // task_recurrences table may not exist — retry without join
