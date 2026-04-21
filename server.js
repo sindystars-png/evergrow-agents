@@ -47,10 +47,10 @@ app.prepare().then(() => {
  */
 function setupCronJobs() {
   // ──────────────────────────────────────────────
-  // Daily at 8:00 AM Central (14:00 UTC)
+  // Daily at 8:00 AM Central Time
   // Execute all due/overdue tasks
   // ──────────────────────────────────────────────
-  cron.schedule("0 14 * * *", async () => {
+  cron.schedule("0 8 * * *", async () => {
     console.log(`[CRON] ${new Date().toISOString()} — Running daily task execution...`);
     try {
       const res = await fetch(`http://localhost:${port}/api/cron/execute-tasks`, {
